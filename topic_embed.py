@@ -13,7 +13,7 @@ class MGene(keras.utils.Sequence):
 
     def __init__(self, batch_size):
         self.batch_size = batch_size
-        self.data = pd.read_csv("./topic_embed.csv", sep=' ').values.reshape((-1,))
+        self.data = pd.read_csv("./data/topic_embed.csv", sep=' ').values.reshape((-1,))
         self.len = len(self.data)
 
     def __getitem__(self, index):
