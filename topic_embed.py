@@ -3,7 +3,6 @@ from keras.layers import Dense, Input
 from keras.datasets import mnist
 from keras.models import Model
 import numpy as np
-import pymssql  # 引入pymssql模块
 import numpy as np
 import pandas as pd
 from calls import SaveCall
@@ -33,9 +32,9 @@ class MGene(keras.utils.Sequence):
 
 input = Input(shape=(100001,))
 #e1 = Dense(10000, activation='relu')(input)
-embemdden = Dense(1000, activation='relu')(input)
+embemdden = Dense(256, activation='relu')(input)
 #d1 = Dense(10000, activation='relu')(embemdden)
-output = Dense(100001, activation='tanh')(embemdden)
+output = Dense(100001, activation='sigmoid')(embemdden)
 
 autoencoder = Model(input=input, output=output)
 encoder = Model(input=input, output=embemdden)
@@ -43,8 +42,8 @@ encoder = Model(input=input, output=embemdden)
 autoencoder.compile(optimizer='adam', loss='binary_crossentropy')
 autoencoder.summary()
 
-batch_size = 32
+batch_size = 256
 gene = MGene(batch_size= batch_size)
-save_call = SaveCall(filepath="./ckpt/{epoch}-{batch}-{loss:.6f}.ckpt", period=80, mode=SaveCall.train_mode, max_one=False)
+save_call = SaveCall(filepath="./ckpt/{epoch}-{batch}-{loss:.6f}.ckpt", period=1000, mode=SaveCall.train_mode, max_one=False)
 iepoch = save_call.load(autoencoder)
-autoencoder.fit_generator(gene, epochs=20, verbose=1, shuffle=False, initial_epoch=iepoch, callbacks=[save_call])
+autoencoder.fit_generator(gene, epochs=20, verbose=2, shuffle=False, initial_epoch=iepoch, callbacks=[save_call], steps_per_epoch=gene.len//gene.batch_size)
